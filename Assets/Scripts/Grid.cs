@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 // Grid of tiles
@@ -38,5 +39,32 @@ public class Grid : MonoBehaviour
                 Rows[y].Cells[x].Position = new Vector2Int(x, y);
             }
         }
+    }
+
+    // Get a random cell that is empty
+    public Cell GetRandomEmptyCell()
+    {
+        // Get random index
+        int index = Random.Range(0, Cells.Length);
+        // Save it
+        int startIndex = index;
+        
+        // Loop until none occupied cell is found
+        while (Cells[index].Occupied)
+        {
+            // Increase the cell index
+            ++index;
+
+            // If it is too high, reset it to 0
+            if (index >= Cells.Length)
+                index = 0;
+            
+            // If all cells were checked, return null
+            if (index == startIndex)
+                return null;
+        }
+        
+        // Return the empty cell
+        return Cells[index];
     }
 }
