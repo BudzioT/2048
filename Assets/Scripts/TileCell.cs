@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 // Singular cell
-public class Cell : MonoBehaviour
+public class TileCell : MonoBehaviour
 {
     // Position of the cell
     public Vector2Int Position { get; set; }

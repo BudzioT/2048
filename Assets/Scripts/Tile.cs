@@ -12,7 +12,7 @@ public class Tile : MonoBehaviour
     // State for quick state change
     public TileState State { get; private set; }
     // Current cell
-    public Cell Cell { get; private set; }
+    public TileCell TileCell { get; private set; }
     
     // Current number that is on the tile
     public int Number { get; private set; }
@@ -44,17 +44,58 @@ public class Tile : MonoBehaviour
     }
 
     // Spawn the cell with a tile
-    public void Spawn(Cell cell)
+    public void Spawn(TileCell tileCell)
     {
         // If this cell was already assigned, set it to null
-        if (this.Cell != null) 
-            this.Cell.Tile = null;
+        if (this.TileCell != null) 
+            this.TileCell.Tile = null;
         
         // Set the cell and make this tile a part of it
-        this.Cell = cell;
-        this.Cell.Tile = this;
+        this.TileCell = tileCell;
+        this.TileCell.Tile = this;
 
         // Make them the same position
-        transform.position = cell.transform.position;
+        transform.position = tileCell.transform.position;
+    }
+
+    // Move to a given cell
+    public void Move(TileCell cell)
+    {
+        // If this cell was already occupied, reset it
+        if (this.TileCell != null) 
+            this.TileCell.Tile = null;
+        
+        // Make a new cell with this one
+        this.TileCell = cell;
+        this.TileCell.Tile = this;
+
+        // Animate and move the tile
+        StartCoroutine(Animate(cell.transform.position));
+    }
+
+    // Animate the tile movement to a new position
+    private IEnumerator Animate(Vector3 newPos)
+    {
+        // Duration and elapsed time of the animation
+        float elapsed = 0f;
+        float duration = 0.2f;
+        
+        // Store the current position
+        Vector3 pos = transform.position;
+
+        // While animation lasts
+        while (elapsed < duration)
+        {
+            // Increase smoothly the position
+            transform.position = Vector3.Lerp(pos, newPos, elapsed / duration);
+            // Update elapsed time
+            elapsed += Time.deltaTime;
+            
+            // Suspend the function till the next frame
+            yield return null;
+        }
+        
+        // Manually set the position in case it wasn't set precisely
+        transform.position = newPos;
     }
 }
