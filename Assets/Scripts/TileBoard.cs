@@ -180,6 +180,9 @@ public class TileBoard : MonoBehaviour
         int number = rhs.Number * 2;
         // Finally, set state of the tile that was merged into
         rhs.SetState(tileStates[index], number);
+        
+        // Increase score by half of the number (half to prevent magically big scores)
+        manager.IncreaseScore(number / 2);
     }
 
     private bool CheckGameOver()
