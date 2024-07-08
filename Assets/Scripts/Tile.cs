@@ -20,6 +20,9 @@ public class Tile : MonoBehaviour
     private Image _background;
     // Its text
     private TextMeshProUGUI _text;
+    
+    // Lock flag
+    public bool Locked { get; set; }
 
     private void Awake()
     {
@@ -70,11 +73,26 @@ public class Tile : MonoBehaviour
         this.TileCell.Tile = this;
 
         // Animate and move the tile
-        StartCoroutine(Animate(cell.transform.position));
+        StartCoroutine(Animate(cell.transform.position, false));
+    }
+
+    public void Merge(TileCell cell)
+    {
+        // If this cell was occupied, clear this tile
+        if (this.TileCell != null) 
+            this.TileCell.Tile = null;
+        // Clear the cell
+        this.TileCell = null;
+        
+        // Lock the cell that is merged to
+        cell.Tile.Locked = true;
+        
+        // Animate the merge
+        StartCoroutine(Animate(cell.transform.position, true));
     }
 
     // Animate the tile movement to a new position
-    private IEnumerator Animate(Vector3 newPos)
+    private IEnumerator Animate(Vector3 newPos, bool merge)
     {
         // Duration and elapsed time of the animation
         float elapsed = 0f;
@@ -97,5 +115,9 @@ public class Tile : MonoBehaviour
         
         // Manually set the position in case it wasn't set precisely
         transform.position = newPos;
+        
+        // If the tile is merging, delete it
+        if (merge)
+            Destroy(gameObject);
     }
 }
